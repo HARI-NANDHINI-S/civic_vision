@@ -1,0 +1,153 @@
+{
+    "model_version": "1.0.0",
+    "training_timestamp": "2026-09-30T06:18:48.941701+00:00",
+    "selected_model": "RandomForest",
+    "feature_schema": {
+        "numeric": [
+            "issue_count",
+            "max_severity_score",
+            "total_damage_area",
+            "road_age_years"
+        ],
+        "categorical": [
+            "traffic_volume",
+            "nearby_sensitive_location"
+        ]
+    },
+    "class_mapping": {
+        "0": "Critical",
+        "1": "High",
+        "2": "Low",
+        "3": "Medium"
+    },
+    "evaluation_metrics": {
+        "LogisticRegression": {
+            "accuracy": 0.895,
+            "precision": 0.8958837342268672,
+            "recall": 0.895,
+            "f1_score": 0.8943210964908684,
+            "confusion_matrix": [
+                [
+                    11,
+                    6,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    91,
+                    0,
+                    10
+                ],
+                [
+                    0,
+                    0,
+                    103,
+                    9
+                ],
+                [
+                    0,
+                    9,
+                    7,
+                    153
+                ]
+            ]
+        },
+        "DecisionTree": {
+            "accuracy": 0.9725,
+            "precision": 0.97268250106929,
+            "recall": 0.9725,
+            "f1_score": 0.9724898833051008,
+            "confusion_matrix": [
+                [
+                    15,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    99,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    111,
+                    1
+                ],
+                [
+                    0,
+                    4,
+                    1,
+                    164
+                ]
+            ]
+        },
+        "RandomForest": {
+            "accuracy": 0.9775,
+            "precision": 0.9776461559082483,
+            "recall": 0.9775,
+            "f1_score": 0.9775188734030198,
+            "confusion_matrix": [
+                [
+                    17,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    99,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    0,
+                    111,
+                    1
+                ],
+                [
+                    0,
+                    4,
+                    1,
+                    164
+                ]
+            ]
+        },
+        "GradientBoosting": {
+            "accuracy": 0.96,
+            "precision": 0.9600512820512822,
+            "recall": 0.96,
+            "f1_score": 0.9598574029126213,
+            "confusion_matrix": [
+                [
+                    14,
+                    3,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    96,
+                    0,
+                    5
+                ],
+                [
+                    0,
+                    0,
+                    111,
+                    1
+                ],
+                [
+                    0,
+                    5,
+                    1,
+                    163
+                ]
+            ]
+        }
+    }
+}
