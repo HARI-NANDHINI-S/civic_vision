@@ -7,7 +7,7 @@ export const inspectionService = {
   async analyzeImage(file: File): Promise<Inspection> {
     if (!USE_MOCK) {
       const body = new FormData(); body.append('file', file)
-      return http<Inspection>('/inspections', { method: 'POST', body })
+      return http<Inspection>('/inspections/', { method: 'POST', body })
     }
     await delay(600)
     return mockInspection(file.name)
