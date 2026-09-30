@@ -1,8 +1,8 @@
+import json
 import os
 import tempfile
-import json
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
-from typing import Dict, Any, Optional
+
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 
 from app.ml.detection.detector import YoloStubDetector
 from app.services.inspection import InspectionWorkflowService
@@ -17,10 +17,10 @@ detector = YoloStubDetector()
 detector.load_model()
 inspection_service = InspectionWorkflowService(detector=detector)
 
+
 @router.post("/")
 async def create_inspection(
-    file: UploadFile = File(...),
-    context: Optional[str] = Form(None)
+    file: UploadFile = File(...), context: str | None = Form(None)
 ):
     """
     Process a new civic inspection image.
@@ -28,36 +28,44 @@ async def create_inspection(
     """
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file uploaded")
-        
+
     # Check file size if available
     if file.size and file.size > MAX_UPLOAD_SIZE:
-        raise HTTPException(status_code=413, detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE / (1024*1024)} MB.")
-        
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE / (1024*1024)} MB.",
+        )
+
     context_data = {}
     if context:
         try:
             context_data = json.loads(context)
         except json.JSONDecodeError:
             raise HTTPException(status_code=400, detail="Invalid JSON context")
-            
+
     # Save uploaded file to temp path
     fd, path = tempfile.mkstemp(suffix=os.path.splitext(file.filename)[1])
     os.close(fd)
-    
+
     try:
         # Stream read with size enforcement
         content = await file.read(MAX_UPLOAD_SIZE + 1)
         if len(content) > MAX_UPLOAD_SIZE:
-            raise HTTPException(status_code=413, detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE / (1024*1024)} MB.")
-            
+            raise HTTPException(
+                status_code=413,
+                detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE / (1024*1024)} MB.",
+            )
+
         with open(path, "wb") as f:
             f.write(content)
-            
+
         # Run workflow (no DB persistence in this phase yet)
-        result = inspection_service.process_inspection(path, provided_context=context_data)
-        
+        result = inspection_service.process_inspection(
+            path, provided_context=context_data
+        )
+
         return result.model_dump()
-        
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -66,9 +74,13 @@ async def create_inspection(
         if os.path.exists(path):
             os.remove(path)
 
+
 @router.get("/{inspection_id}")
 async def get_inspection(inspection_id: int):
     """
     Get inspection details (Stubbed for now, as DB persistence is next)
     """
-    return {"message": "Not implemented yet - awaiting DB integration in subsequent phases", "id": inspection_id}
+    return {
+        "message": "Not implemented yet - awaiting DB integration in subsequent phases",
+        "id": inspection_id,
+    }
