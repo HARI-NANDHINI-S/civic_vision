@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from app.api.endpoints import inspections, map
+from app.api.endpoints import inspections, map, maintenance
 
 from contextlib import asynccontextmanager
 
@@ -39,6 +39,7 @@ def create_app() -> FastAPI:
     app.include_router(api_router, prefix=settings.API_V1_STR)
     app.include_router(inspections.router, prefix=f"{settings.API_V1_STR}/inspections", tags=["inspections"])
     app.include_router(map.router, prefix=f"{settings.API_V1_STR}/map", tags=["map"])
+    app.include_router(maintenance.router, prefix=f"{settings.API_V1_STR}/maintenance", tags=["maintenance"])
     
     # Exception handling
     setup_exception_handlers(app)
