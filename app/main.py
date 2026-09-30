@@ -8,11 +8,21 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+from app.api.endpoints import inspections
+
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Starting up CivicVision AI backend...")
+    yield
+
 def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.PROJECT_NAME,
         openapi_url=f"{settings.API_V1_STR}/openapi.json",
         version=settings.VERSION,
+        lifespan=lifespan,
     )
 
     # Set all CORS enabled origins
@@ -27,13 +37,10 @@ def create_app() -> FastAPI:
 
     # Include routers
     app.include_router(api_router, prefix=settings.API_V1_STR)
+    app.include_router(inspections.router, prefix=f"{settings.API_V1_STR}/inspections", tags=["inspections"])
     
     # Exception handling
     setup_exception_handlers(app)
-
-    @app.on_event("startup")
-    async def startup_event():
-        logger.info("Starting up CivicVision AI backend...")
 
     return app
 
