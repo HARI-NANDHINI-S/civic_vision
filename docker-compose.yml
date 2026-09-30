@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/civic_vision
+      - SUPABASE_URL=mock_url
+      - SUPABASE_KEY=mock_key
+    # The depends_on config will be expanded when the DB is added in Phase 22
