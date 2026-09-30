@@ -35,3 +35,15 @@ def test_get_inspection_stub():
     response = client.get("/api/v1/inspections/1")
     assert response.status_code == 200
     assert response.json()["id"] == 1
+
+def test_create_inspection_too_large():
+    # 11 MB dummy bytes
+    large_bytes = b"0" * (11 * 1024 * 1024)
+    
+    response = client.post(
+        "/api/v1/inspections/",
+        files={"file": ("large.jpg", large_bytes, "image/jpeg")}
+    )
+    
+    assert response.status_code == 413
+    assert "File too large" in response.json()["detail"]

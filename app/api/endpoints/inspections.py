@@ -9,6 +9,9 @@ from app.services.inspection import InspectionWorkflowService
 
 router = APIRouter()
 
+# 10 MB maximum upload size
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+
 # Setup detector (In real app, this would be dependency injected or globally initialized)
 detector = YoloStubDetector()
 detector.load_model()
@@ -26,6 +29,10 @@ async def create_inspection(
     if not file.filename:
         raise HTTPException(status_code=400, detail="No file uploaded")
         
+    # Check file size if available
+    if file.size and file.size > MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE / (1024*1024)} MB.")
+        
     context_data = {}
     if context:
         try:
@@ -38,7 +45,11 @@ async def create_inspection(
     os.close(fd)
     
     try:
-        content = await file.read()
+        # Stream read with size enforcement
+        content = await file.read(MAX_UPLOAD_SIZE + 1)
+        if len(content) > MAX_UPLOAD_SIZE:
+            raise HTTPException(status_code=413, detail=f"File too large. Maximum size is {MAX_UPLOAD_SIZE / (1024*1024)} MB.")
+            
         with open(path, "wb") as f:
             f.write(content)
             
