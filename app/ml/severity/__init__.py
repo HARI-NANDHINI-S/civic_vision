@@ -1,0 +1,1 @@
+# Init severity module
