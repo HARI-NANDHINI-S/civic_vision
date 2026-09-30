@@ -8,3 +8,5 @@ sqlalchemy
 geoalchemy2
 psycopg2-binary
 alembic
+opencv-python-headless
+numpy
